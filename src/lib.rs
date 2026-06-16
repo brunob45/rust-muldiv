@@ -28,16 +28,6 @@
 //! [`mul_div_round()`]: trait.MulDiv.html#tymethod.mul_div_round
 //! [`mul_div_ceil()`]: trait.MulDiv.html#tymethod.mul_div_ceil
 
-use core::u16;
-use core::u32;
-use core::u64;
-use core::u8;
-
-use core::i16;
-use core::i32;
-use core::i64;
-use core::i8;
-
 /// Trait for calculating `val * num / denom` with different rounding modes and overflow
 /// protection.
 ///
@@ -293,7 +283,7 @@ mod muldiv_u8_tests {
 }
 
 macro_rules! mul_div_impl_signed {
-    ($t:ident, $u:ident, $v:ident, $b:expr) => {
+    ($t:ident, $u:ident, $v:ident) => {
         impl MulDiv for $t {
             type Output = $t;
 
@@ -304,12 +294,11 @@ macro_rules! mul_div_impl_signed {
 
                 let sgn = self.signum() * num.signum() * denom.signum();
 
-                let min_val: $u = 1 << ($b - 1);
-                let abs = |x: $t| if x != $t::MIN { x.abs() as $u } else { min_val };
+                let min_val = $t::MAX as $u + 1;
 
-                let self_u = abs(self);
-                let num_u = abs(num);
-                let denom_u = abs(denom);
+                let self_u = self.unsigned_abs();
+                let num_u = num.unsigned_abs();
+                let denom_u = denom.unsigned_abs();
 
                 if sgn < 0 {
                     self_u.mul_div_ceil(num_u, denom_u)
@@ -334,12 +323,11 @@ macro_rules! mul_div_impl_signed {
 
                 let sgn = self.signum() * num.signum() * denom.signum();
 
-                let min_val: $u = 1 << ($b - 1);
-                let abs = |x: $t| if x != $t::MIN { x.abs() as $u } else { min_val };
+                let min_val = $t::MAX as $u + 1;
 
-                let self_u = abs(self);
-                let num_u = abs(num);
-                let denom_u = abs(denom);
+                let self_u = self.unsigned_abs();
+                let num_u = num.unsigned_abs();
+                let denom_u = denom.unsigned_abs();
 
                 if sgn < 0 {
                     let r =
@@ -370,12 +358,11 @@ macro_rules! mul_div_impl_signed {
 
                 let sgn = self.signum() * num.signum() * denom.signum();
 
-                let min_val: $u = 1 << ($b - 1);
-                let abs = |x: $t| if x != $t::MIN { x.abs() as $u } else { min_val };
+                let min_val = $t::MAX as $u + 1;
 
-                let self_u = abs(self);
-                let num_u = abs(num);
-                let denom_u = abs(denom);
+                let self_u = self.unsigned_abs();
+                let num_u = num.unsigned_abs();
+                let denom_u = denom.unsigned_abs();
 
                 if sgn < 0 {
                     self_u.mul_div_floor(num_u, denom_u)
@@ -396,10 +383,10 @@ macro_rules! mul_div_impl_signed {
     };
 }
 
-mul_div_impl_signed!(i64, u64, u128, 64);
-mul_div_impl_signed!(i32, u32, u64, 32);
-mul_div_impl_signed!(i16, u16, u32, 16);
-mul_div_impl_signed!(i8, u8, u16, 8);
+mul_div_impl_signed!(i64, u64, u128);
+mul_div_impl_signed!(i32, u32, u64);
+mul_div_impl_signed!(i16, u16, u32);
+mul_div_impl_signed!(i8, u8, u16);
 
 #[cfg(test)]
 macro_rules! mul_div_impl_signed_tests {
