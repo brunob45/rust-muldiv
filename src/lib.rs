@@ -153,7 +153,9 @@ macro_rules! mul_div_impl_unsigned {
             type Output = $t;
 
             fn mul_div_floor(self, num: $t, denom: $t) -> Option<$t> {
-                assert_ne!(denom, 0);
+                if denom == 0 {
+                    return None;
+                }
                 let r = ((self as $u) * (num as $u)) / (denom as $u);
                 if r > $t::MAX as $u {
                     None
@@ -163,7 +165,9 @@ macro_rules! mul_div_impl_unsigned {
             }
 
             fn mul_div_round(self, num: $t, denom: $t) -> Option<$t> {
-                assert_ne!(denom, 0);
+                if denom == 0 {
+                    return None;
+                }
                 let r = ((self as $u) * (num as $u) + ((denom >> 1) as $u)) / (denom as $u);
                 if r > $t::MAX as $u {
                     None
@@ -173,7 +177,9 @@ macro_rules! mul_div_impl_unsigned {
             }
 
             fn mul_div_ceil(self, num: $t, denom: $t) -> Option<$t> {
-                assert_ne!(denom, 0);
+                if denom == 0 {
+                    return None;
+                }
                 let r = ((self as $u) * (num as $u) + ((denom - 1) as $u)) / (denom as $u);
                 if r > $t::MAX as $u {
                     None
@@ -292,7 +298,9 @@ macro_rules! mul_div_impl_signed {
             type Output = $t;
 
             fn mul_div_floor(self, num: $t, denom: $t) -> Option<$t> {
-                assert_ne!(denom, 0);
+                if denom == 0 {
+                    return None;
+                }
 
                 let sgn = self.signum() * num.signum() * denom.signum();
 
@@ -320,7 +328,9 @@ macro_rules! mul_div_impl_signed {
             }
 
             fn mul_div_round(self, num: $t, denom: $t) -> Option<$t> {
-                assert_ne!(denom, 0);
+                if denom == 0 {
+                    return None;
+                }
 
                 let sgn = self.signum() * num.signum() * denom.signum();
 
@@ -354,7 +364,9 @@ macro_rules! mul_div_impl_signed {
             }
 
             fn mul_div_ceil(self, num: $t, denom: $t) -> Option<$t> {
-                assert_ne!(denom, 0);
+                if denom == 0 {
+                    return None;
+                }
 
                 let sgn = self.signum() * num.signum() * denom.signum();
 
